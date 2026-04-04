@@ -35,7 +35,6 @@
 
 ## Haftalık İlerleme Kayıtları
 
-> **Kullanım:** Her hafta aşağıdaki şablonu kopyalayıp doldurun. En güncel hafta en üstte olacak şekilde ekleyin.
 
 ---
 
