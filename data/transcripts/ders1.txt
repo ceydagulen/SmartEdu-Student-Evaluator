@@ -1,0 +1,12 @@
+Bugün lineer regresyon konusunu işleyeceğiz. 
+Lineer regresyon, bağımlı ve bağımsız değişkenler arasındaki ilişkiyi modelleyen bir yöntemdir.
+Bağımlı değişken, tahmin etmeye çalıştığımız değişkendir.
+Bağımsız değişken ise tahmin için kullandığımız değişkendir.
+
+Örneğin ev fiyatlarını tahmin etmek istiyoruz.
+Evin büyüklüğü bağımsız değişken, fiyatı ise bağımlı değişkendir.
+Model, bu iki değişken arasındaki doğrusal ilişkiyi öğrenir.
+
+Maliyet fonksiyonu, modelin ne kadar hata yaptığını ölçer.
+Gradient descent algoritması bu hatayı minimize etmek için kullanılır.
+Her iterasyonda model parametreleri güncellenir ve hata azaltılmaya çalışılır.

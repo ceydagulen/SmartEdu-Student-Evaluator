@@ -18,7 +18,7 @@
 
 | Hafta | Tarih Aralığı | Planlanan İş | Tahmini Tamamlanma (%) | Durum |
 |-------|---------------|--------------|------------------------|-------|
-| 1 | 06.04 - 12.04 | *Literatür Taraması ve RAG Mimarisi Teknik Araştırması* | %10 | ⬜ Başlamadı |
+| 1 | 06.04 - 12.04 | *Literatür Taraması ve RAG Mimarisi Teknik Araştırması* | %10 | ✅ Tamamlandı |
 | 2 | 13.04 - 19.04 | *Veri Seti Hazırlığı ve Ön İşleme Betikleri* | %20 | ⬜ Başlamadı |
 | 3 | 27.04 - 03.05 | *Vektör Veritabanı  Kurulumu ve Embedding Testleri* | %30 | ⬜ Başlamadı |
 | 4 | 04.05 - 10.05 | *RAG Akışının Kurulması* | %40 | ⬜ Başlamadı |
@@ -38,22 +38,31 @@
 
 ---
 
-### Hafta 1 *(Tarih: GG.AA.YYYY - GG.AA.YYYY)*
+### Hafta 1 *(Tarih: 06.04.2025 - 12.04.2025)*
 
 **Plandaki hedef:**
-- *(İş planındaki o haftaya ait maddeyi buraya yazın)*
+- Literatür Taraması ve RAG Mimarisi Teknik Araştırması
 
 **Bu hafta yaptıklarım:**
-- *(Yaptığınız işleri madde madde yazın)*
+- RAG (Retrieval-Augmented Generation) mimarisi araştırıldı ve proje yapısına nasıl entegre edileceği belirlendi
+- LangChain, LangGraph, ChromaDB, Whisper teknolojileri araştırıldı ve karşılaştırıldı
+- Groq API entegrasyonu yapıldı, LLaMA 3.3 70B modeli ile ilk bağlantı testi başarıyla tamamlandı
+- Proje klasör yapısı oluşturuldu ve GitHub'a push edildi
+- Transkript işleme modülü (transcription.py) geliştirildi ve test edildi
+- Sanal ortam (venv) kuruldu, gerekli kütüphaneler yüklendi
 
 **Plana göre durumum:**
-- *(Plandaki hedefe ulaştınız mı? Gerideyseniz nedenini açıklayın)*
+- Plandaki hedefe ulaşıldı. Literatür taraması tamamlandı, RAG mimarisi teknik olarak araştırıldı ve ilk implementasyon adımları atıldı.
 
 **Karşılaştığım sorunlar / zorluklar:**
-- *(Varsa karşılaştığınız teknik veya diğer sorunları yazın. Yoksa "Yok" yazın)*
+- Python 3.14 sürümü kütüphane uyumsuzlukları nedeniyle Python 3.11.9 sürümüne geçildi
+- llama3-8b-8192 modeli kullanımdan kalktığı için llama-3.3-70b-versatile modeline geçildi
+- PowerShell script çalıştırma kısıtlaması giderildi
 
 **Gelecek hafta hedefim:**
-- *(Bir sonraki hafta yapmayı planladığınız işleri yazın)*
+- Veri seti hazırlığı ve ön işleme betiklerinin yazılması
+- Embedding modülünün geliştirilmesi
+- ChromaDB vektör veritabanı kurulumu ve ilk testlerin yapılması
 
 ---
 
