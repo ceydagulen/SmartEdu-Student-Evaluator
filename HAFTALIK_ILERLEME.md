@@ -19,7 +19,7 @@
 | Hafta | Tarih Aralığı | Planlanan İş | Tahmini Tamamlanma (%) | Durum |
 |-------|---------------|--------------|------------------------|-------|
 | 1 | 06.04 - 12.04 | *Literatür Taraması ve RAG Mimarisi Teknik Araştırması* | %10 | ✅ Tamamlandı |
-| 2 | 13.04 - 19.04 | *Veri Seti Hazırlığı ve Ön İşleme Betikleri* | %20 | ⬜ Başlamadı |
+| 2 | 13.04 - 19.04 | *Veri Seti Hazırlığı ve Ön İşleme Betikleri* | %20 | ✅ Tamamlandı |
 | 3 | 27.04 - 03.05 | *Vektör Veritabanı  Kurulumu ve Embedding Testleri* | %30 | ⬜ Başlamadı |
 | 4 | 04.05 - 10.05 | *RAG Akışının Kurulması* | %40 | ⬜ Başlamadı |
 | 5 | 11.05 - 17.05 | *Metinden Kavram Haritası Çıkarma Modülünün Geliştirilmesi* | %50 | ⬜ Başlamadı |
@@ -63,6 +63,34 @@
 - Veri seti hazırlığı ve ön işleme betiklerinin yazılması
 - Embedding modülünün geliştirilmesi
 - ChromaDB vektör veritabanı kurulumu ve ilk testlerin yapılması
+
+
+
+### Hafta 2 *(Tarih: 13.04.2025 - 19.04.2025)*
+
+**Plandaki hedef:**
+- Veri Seti Hazırlığı ve Ön İşleme Betikleri
+
+**Bu hafta yaptıklarım:**
+- Örnek ders transkripti (ders1.txt) oluşturuldu
+- Transkript işleme modülü tamamlandı (transcription.py)
+- HuggingFace embedding modeli entegre edildi
+- ChromaDB vektör veritabanı kuruldu ve test edildi
+- RAG modülü geliştirildi (rag.py)
+- "Lineer regresyon nedir?" sorusuna transkriptten başarılı cevap alındı
+
+**Plana göre durumum:**
+- Plandaki hedefe ulaşıldı. Veri seti hazırlandı, ön işleme betikleri yazıldı ve RAG sistemi başarıyla test edildi.
+
+**Karşılaştığım sorunlar / zorluklar:**
+- LangChain yeni versiyonunda bazı modüller taşınmıştı, import yolları güncellendi
+- sentence-transformers ve langchain-chroma ek kurulum gerektirdi
+
+**Gelecek hafta hedefim:**
+- Vektör veritabanı kurulumunu kalıcı hale getirme
+- Embedding testlerini genişletme
+- Daha fazla transkript verisiyle sistemin test edilmesi
+
 
 ---
 

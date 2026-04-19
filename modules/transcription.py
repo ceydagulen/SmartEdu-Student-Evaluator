@@ -1,4 +1,4 @@
-from langchain.schema import Document
+from langchain_core.documents import Document
 import os
 
 def load_transcript(file_path: str) -> list[Document]:
@@ -27,7 +27,7 @@ def split_transcript(documents: list[Document], chunk_size=500, chunk_overlap=50
     """
     Uzun transkripti küçük parçalara böler (chunking).
     """
-    from langchain.text_splitter import RecursiveCharacterTextSplitter
+    from langchain_text_splitters import RecursiveCharacterTextSplitter
 
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
