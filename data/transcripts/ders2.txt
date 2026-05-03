@@ -1,0 +1,15 @@
+Bugün makine öğrenmesinde sınıflandırma algoritmalarını işleyeceğiz.
+Sınıflandırma, veriyi önceden belirlenmiş kategorilere ayırma işlemidir.
+En yaygın sınıflandırma algoritmalarından biri Karar Ağaçları'dır.
+
+Karar Ağaçları, veriyi özelliklerine göre dallara bölerek sınıflandırır.
+Her dal bir karar noktasını temsil eder ve yapraklar sonuç kategorilerini gösterir.
+Gini indeksi ve entropi, dal bölme kriterlerinde kullanılan ölçütlerdir.
+
+Random Forest ise birden fazla karar ağacını birleştiren bir topluluk yöntemidir.
+Her ağaç farklı veri örnekleriyle eğitilir ve sonuçlar oylama ile birleştirilir.
+Bu yöntem tek bir karar ağacına göre çok daha başarılı sonuçlar verir.
+
+Destek Vektör Makineleri de önemli bir sınıflandırma algoritmasıdır.
+Bu algoritma, sınıflar arasındaki en geniş marjı bulmaya çalışır.
+Doğrusal olmayan problemler için kernel trick yöntemi kullanılır.
