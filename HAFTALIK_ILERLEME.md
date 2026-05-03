@@ -20,7 +20,7 @@
 |-------|---------------|--------------|------------------------|-------|
 | 1 | 06.04 - 12.04 | *Literatür Taraması ve RAG Mimarisi Teknik Araştırması* | %10 | ✅ Tamamlandı |
 | 2 | 13.04 - 19.04 | *Veri Seti Hazırlığı ve Ön İşleme Betikleri* | %20 | ✅ Tamamlandı |
-| 3 | 27.04 - 03.05 | *Vektör Veritabanı  Kurulumu ve Embedding Testleri* | %30 | ⬜ Başlamadı |
+| 3 | 27.04 - 03.05 | *Vektör Veritabanı  Kurulumu ve Embedding Testleri* | %30 |✅ Tamamlandı |
 | 4 | 04.05 - 10.05 | *RAG Akışının Kurulması* | %40 | ⬜ Başlamadı |
 | 5 | 11.05 - 17.05 | *Metinden Kavram Haritası Çıkarma Modülünün Geliştirilmesi* | %50 | ⬜ Başlamadı |
 | 6 | 18.05 - 24.05 | *Dinamik Quiz Üretim Algoritmasının Kodlanması* | %60 | ⬜ Başlamadı |
@@ -90,6 +90,29 @@
 - Vektör veritabanı kurulumunu kalıcı hale getirme
 - Embedding testlerini genişletme
 - Daha fazla transkript verisiyle sistemin test edilmesi
+
+### Hafta 3 *(Tarih: 27.04.2025 - 03.05.2025)*
+
+**Plandaki hedef:**
+- Vektör Veritabanı Kurulumu ve Embedding Testleri
+
+**Bu hafta yaptıklarım:**
+- İkinci ders transkripti oluşturuldu (ders2.txt - sınıflandırma algoritmaları)
+- Birden fazla transkriptle embedding testi yapıldı
+- Çoklu transkript yükleme ve birleştirme sistemi geliştirildi (test_multi_rag.py)
+- Farklı derslerden sorulara başarılı cevaplar alındı
+- requirements.txt güncellendi
+
+**Plana göre durumum:**
+- Plandaki hedefe ulaşıldı. Vektör veritabanı kurulumu tamamlandı, embedding testleri başarıyla gerçekleştirildi.
+
+**Karşılaştığım sorunlar / zorluklar:**
+- .env dosyasının silinmesi nedeniyle Groq API anahtarı yenilendi
+
+**Gelecek hafta hedefim:**
+- RAG akışını daha sağlam hale getirme
+- Kavram haritası çıkarma modülünün geliştirilmesi
+
 
 
 ---
