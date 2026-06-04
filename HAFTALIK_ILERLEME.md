@@ -25,7 +25,7 @@
 | 5 | 11.05 - 17.05 | *Metinden Kavram Haritası Çıkarma Modülünün Geliştirilmesi* | %50 | ✅ Tamamlandı |
 | 6 | 18.05 - 24.05 | *Dinamik Quiz Üretim Algoritmasının Kodlanması* | %60 | ✅ Tamamlandı |
 | 7 | 25.05 - 31.05 | *Öğrenci Performans Analizi ve Öneri Mantığının Oluşturulması* | %70 | ✅ Tamamlandı |
-| 8 | 01.06 - 07.06 | *Web Arayüzü Geliştirme ve API Entegrasyonu* | %80 | 🔄 Devam Ediyor |
+| 8 | 01.06 - 07.06 | *Web Arayüzü Geliştirme ve API Entegrasyonu* | %80 |  ✅ Tamamlandı  |
 | 9 | 08.06 - 14.06 | *Sistem Testleri, Hata Ayıklama ve Model Optimizasyonu* | %90 | ⬜ Başlamadı |
 | 10| 15.06 - 21.06 | *Proje Raporunun Tamamlanması ve Sunum Hazırlığı* | %100 | ⬜ Başlamadı |
 
@@ -212,6 +212,32 @@
 - Sistem testleri ve hata ayıklama
 
 
+### Hafta 8 *(Tarih: 01.06.2025 - 07.06.2025)*
+
+**Plandaki hedef:**
+- Web Arayüzü Geliştirme ve API Entegrasyonu
+
+**Bu hafta yaptıklarım:**
+- Streamlit web arayüzü baştan profesyonel olarak yeniden tasarlandı (sidebar, bilgi kartları, ilerleme çubukları)
+- Aşama bazlı akış kuruldu: giriş → ders seçimi → quiz → sonuç
+- Ders kaynağı seçimi eklendi: yeni video yükleme veya kayıtlı dersten seçme
+- Quiz tipi seçimi eklendi: çoktan seçmeli, doğru/yanlış veya ikisi birden
+- Her quiz tipi için ayrı soru sayısı belirleme özelliği eklendi
+- Doğru/yanlış soru üretim modülü geliştirildi (generate_true_false)
+- Sonuç ekranında çoktan seçmeli ve doğru/yanlış sonuçları ayrı bölümler halinde gösterildi
+- Groq API, yt-dlp ve HuggingFace embedding servisleri arayüze entegre edildi
+- Hatalı transkriptlere karşı try/except ile hata yönetimi güçlendirildi
+
+**Plana göre durumum:**
+- Plandaki hedefe ulaşıldı. Web arayüzü tamamlandı ve harici API servisleri (Groq, yt-dlp, HuggingFace) arayüze başarıyla entegre edildi.
+
+**Karşılaştığım sorunlar / zorluklar:**
+- Koyu temada metrik kutularındaki yazılar görünmüyordu, CSS ile düzeltildi
+- Türkçe karakterli ders adlarında klasör adı sorunu yaşandı, slugify fonksiyonu eklendi
+
+**Gelecek hafta hedefim:**
+- Sistem testleri ve hata ayıklama
+- Model optimizasyonu ve performans iyileştirmeleri
 ---
 
 <!--

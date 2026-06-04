@@ -78,3 +78,53 @@ def print_quiz(quiz: list):
             print(f"  {harf}) {metin}")
         print(f"  ✅ Doğru cevap: {soru['dogru_cevap']}")
         print(f"  📝 Açıklama: {soru['aciklama']}")
+
+def generate_true_false(vectorstore, soru_sayisi: int = 5) -> list:
+    """
+    Transkriptten doğru/yanlış soruları üretir.
+    """
+    llm = ChatGroq(
+        api_key=os.getenv("GROQ_API_KEY"),
+        model="llama-3.3-70b-versatile"
+    )
+
+    retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
+    docs = retriever.invoke("bu derste anlatılan önemli bilgiler ve kavramlar")
+    context = "\n".join([doc.page_content for doc in docs])
+
+    prompt = f"""Aşağıdaki ders transkriptine dayanarak {soru_sayisi} adet doğru/yanlış sorusu üret.
+
+Transkript:
+{context}
+
+Kurallar:
+- Her ifade ya doğru ya yanlış olmalı
+- İfadelerin yaklaşık yarısı doğru, yarısı yanlış olsun
+- Yanlış ifadeler mantıklı ama hatalı bilgi içersin (öğrenciyi düşündürsün)
+- Anlamsız veya bozuk görünen teknik terimleri kullanma
+- Türkçe yaz
+- Her soruya bir konu etiketi ekle
+- Sadece JSON formatında döndür, başka hiçbir şey yazma
+
+JSON formatı:
+[
+  {{
+    "ifade": "Değerlendirilecek ifade",
+    "konu": "Konu adı",
+    "dogru_mu": true,
+    "aciklama": "Neden doğru veya yanlış olduğunun açıklaması"
+  }}
+]"""
+
+    response = llm.invoke(prompt)
+
+    try:
+        text = response.content.strip()
+        text = text.replace("```json", "").replace("```", "").strip()
+        sorular = json.loads(text)
+        print(f"{len(sorular)} doğru/yanlış sorusu üretildi.")
+        return sorular
+    except json.JSONDecodeError:
+        print("JSON parse hatası:")
+        print(response.content)
+        return []
