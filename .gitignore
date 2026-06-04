@@ -1,0 +1,11 @@
+venv/
+__pycache__/
+*.pyc
+.env
+data/audio/
+data/vectorstore/
+data/transcripts/
+*.mp3
+*.mp4
+*.webm
+data/smartedu.db
