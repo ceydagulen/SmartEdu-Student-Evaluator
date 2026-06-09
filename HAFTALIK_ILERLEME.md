@@ -26,7 +26,7 @@
 | 6 | 18.05 - 24.05 | *Dinamik Quiz Üretim Algoritmasının Kodlanması* | %60 | ✅ Tamamlandı |
 | 7 | 25.05 - 31.05 | *Öğrenci Performans Analizi ve Öneri Mantığının Oluşturulması* | %70 | ✅ Tamamlandı |
 | 8 | 01.06 - 07.06 | *Web Arayüzü Geliştirme ve API Entegrasyonu* | %80 |  ✅ Tamamlandı  |
-| 9 | 08.06 - 14.06 | *Sistem Testleri, Hata Ayıklama ve Model Optimizasyonu* | %90 | ⬜ Başlamadı |
+| 9 | 08.06 - 14.06 | *Sistem Testleri, Hata Ayıklama ve Model Optimizasyonu* | %90 | ✅ Tamamlandı |
 | 10| 15.06 - 21.06 | *Proje Raporunun Tamamlanması ve Sunum Hazırlığı* | %100 | ⬜ Başlamadı |
 
 **Durum simgeleri:** ⬜ Başlamadı | 🔄 Devam Ediyor | ✅ Tamamlandı | ⚠️ Gecikti
@@ -238,6 +238,40 @@
 **Gelecek hafta hedefim:**
 - Sistem testleri ve hata ayıklama
 - Model optimizasyonu ve performans iyileştirmeleri
+
+
+### Hafta 9 *(Tarih: 08.06.2025 - 14.06.2025)*
+
+**Plandaki hedef:**
+- Sistem Testleri, Hata Ayıklama ve Model Optimizasyonu
+
+**Bu hafta yaptıklarım:**
+- Tüm LLM prompt'ları optimize edildi: sistem mesajı (rol tanımı) eklendi, kurallar sadeleştirildi, görev tipine göre temperature ayarlandı (quiz üretimi 0.7, kavram haritası ve analiz 0.3)
+- Quiz üretimi çoklu sorgu (multi-query) retrieval ile çeşitlendirildi; yüksek soru sayıları için batch üretim ve tekrar önleme eklendi
+- Tüm modüllere JSON kalite filtresi eklendi (eksik alan, geçersiz cevap, boolean tip kontrolü)
+- recommender.py ve rag_analysis.py modüllerinde ortak _get_llm() yardımcı fonksiyonu ile LLM örneği paylaşımı sağlandı; gereksiz tekrar eden API çağrıları azaltıldı
+- concept_map.py modülüne özet (ozet) ve anahtar kavramlar (anahtar_kavramlar) alanları eklendi, arayüzde gösterildi
+- Web arayüzüne üçüncü giriş yöntemi eklendi: "Transkript Yapıştır / Yükle" — Zoom/Meet/Teams transkriptleri doğrudan metin veya .txt dosyası olarak yüklenebiliyor (proje özetiyle birebir örtüşme sağlandı)
+- Quiz ekranı iyileştirildi: ilerleme çubuğu, konu etiketleri, cevap kalıcılığı, boş soru uyarısı
+- Streamlit session state kaynaklı "cevaplanmamış soru" hatası giderildi (widget key tabanlı sayım yöntemine geçildi)
+- Embedding modeli HuggingFace (paraphrase-multilingual-MiniLM) yerine OpenAI text-embedding-3-small ile değiştirildi; Türkçe retrieval doğruluğu önemli ölçüde arttı
+- Chunk stratejisi optimize edildi: chunk_size 500→1200, overlap 50→150 (parça sayısı azaldı, her parça daha fazla bağlam taşıyor)
+- Otomatik RAG kalite test scripti yazıldı (test_rag_quality.py): retrieval doğruluğu, quiz kalitesi, cevap analizi ve hallucination direnci ölçülüyor
+- İki farklı konuda test transkripti ile sistem doğrulandı (RAG mimarisi ve Veritabanı/SQL)
+- Geliştirme sürecinde kullanılan manuel test dosyaları (test_*.py) temizlendi
+
+**Plana göre durumum:**
+- Plandaki hedefe ulaşıldı. Sistem testleri tamamlandı, model optimizasyonu yapıldı. Veritabanı/SQL transkriptinde retrieval doğruluğu %100, quiz kalitesi %100 ölçüldü; hallucination direnci testleri başarıyla geçildi.
+
+**Karşılaştığım sorunlar / zorluklar:**
+- Groq API günlük token limiti (100K) yoğun test sırasında defalarca doldu; testler farklı zaman dilimlerine yayılarak yürütüldü
+- HuggingFace embedding modeli Türkçe semantik aramada zayıf kaldı (retrieval %17-42 arası); OpenAI embedding ile %100'e çıkarıldı
+- Küçük chunk boyutu (500) ilgili bilgilerin farklı parçalara dağılmasına yol açıyordu, chunk boyutu büyütülerek çözüldü
+
+**Gelecek hafta hedefim:**
+- Proje raporunun yazılması
+- Sunum hazırlığı ve demo senaryosunun oluşturulması
+
 ---
 
 <!--
