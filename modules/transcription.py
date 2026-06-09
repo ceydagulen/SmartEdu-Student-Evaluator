@@ -26,7 +26,8 @@ def load_transcript(file_path: str) -> list[Document]:
     return [document]
 
 
-def split_transcript(documents: list[Document], chunk_size=500, chunk_overlap=50) -> list[Document]:
+def split_transcript(documents: list[Document], chunk_size=1200, chunk_overlap=150) -> list[Document]:
+
     """
     Uzun transkripti küçük parçalara böler (chunking).
     """

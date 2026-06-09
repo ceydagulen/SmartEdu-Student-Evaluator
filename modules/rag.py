@@ -1,16 +1,16 @@
 from langchain_groq import ChatGroq
 from langchain_chroma import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
 def get_embeddings():
-    embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    return OpenAIEmbeddings(
+        model="text-embedding-3-small",
+        openai_api_key=os.getenv("OPENAI_API_KEY")
     )
-    return embeddings
 
 
 def create_vectorstore(chunks: list, persist_directory="data/vectorstore") -> Chroma:
@@ -42,9 +42,8 @@ def ask_question(question: str, vectorstore: Chroma) -> str:
 
     retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
     docs = retriever.invoke(question)
-    
     context = "\n".join([doc.page_content for doc in docs])
-    
+
     prompt = f"""Aşağıdaki ders transkriptine dayanarak soruyu cevapla.
     
 Transkript:
@@ -53,6 +52,6 @@ Transkript:
 Soru: {question}
 
 Cevap:"""
-    
+
     response = llm.invoke(prompt)
     return response.content

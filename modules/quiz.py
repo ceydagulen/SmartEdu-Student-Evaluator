@@ -11,61 +11,102 @@ def generate_quiz(vectorstore, ders_id: str = "ders_1", soru_sayisi: int = 5) ->
     """
     llm = ChatGroq(
         api_key=os.getenv("GROQ_API_KEY"),
-        model="llama-3.3-70b-versatile"
+        model="llama-3.3-70b-versatile",
+        temperature=0.7,          # Çeşitlilik için — 0 olursa tekrarcı, 1+ olursa saçmalar
+        max_tokens=4096,           # Çok soru üretince cevap kesilebiliyordu
     )
 
-    # Önce dersin ana konularını çıkar
-    retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
-    docs = retriever.invoke("bu derste hangi konular anlatıldı ana başlıklar neler")
-    context = "\n".join([doc.page_content for doc in docs])
+    # Farklı konulardan chunk çekmek için birden fazla query kullan
+    retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
+    
+    queries = [
+        "bu derste anlatılan ana kavramlar ve tanımlar",
+        "bu derste verilen örnekler ve uygulamalar",
+        "bu derste açıklanan yöntemler ve algoritmalar",
+    ]
+    
+    seen = set()
+    all_docs = []
+    for q in queries:
+        for doc in retriever.invoke(q):
+            if doc.page_content not in seen:
+                seen.add(doc.page_content)
+                all_docs.append(doc)
+    
+    context = "\n\n".join([doc.page_content for doc in all_docs])
 
-    prompt = f"""Aşağıdaki ders transkriptine dayanarak {soru_sayisi} adet çoktan seçmeli soru üret.
+    system_prompt = """Sen deneyimli bir eğitim uzmanısın. Ders transkriptlerinden yüksek kaliteli, pedagojik değeri olan quiz soruları üretiyorsun.
+Görevin: Öğrencilerin dersi gerçekten anlayıp anlamadığını ölçen sorular hazırlamak.
+Kural: SADECE verilen JSON formatında cevap ver. Hiçbir ek açıklama, giriş cümlesi veya yorum yazma."""
 
-Transkript:
+    user_prompt = f"""Aşağıdaki ders transkriptine dayanarak TAM OLARAK {soru_sayisi} adet çoktan seçmeli soru üret.
+
+TRANSKRIPT:
 {context}
 
-Kurallar:
-- Her soru 4 şık içermeli (A, B, C, D) Her soru için mutlaka bir "konu" etiketi belirle, bu konu dersin alt başlıklarından biri olmalı
-- Sorular sadece ezbere değil, anlama ve uygulama odaklı olmalı,Her soru için mutlaka bir "konu" etiketi belirle, bu konu dersin alt başlıklarından biri olmalı
-- Bazı sorular "neden", "nasıl", "hangisi yanlış" gibi düşündürücü sorular olmalı,Her soru için mutlaka bir "konu" etiketi belirle, bu konu dersin alt başlıklarından biri olmalı
-- Yanlış şıklar mantıklı ve yanıltıcı olmalı, çok bariz olmamalı,Her soru için mutlaka bir "konu" etiketi belirle, bu konu dersin alt başlıklarından biri olmalı
-- Her sorunun bir doğru cevabı olmalı,er soru için mutlaka bir "konu" etiketi belirle, bu konu dersin alt başlıklarından biri olmalı
-- Türkçe yaz
-- Sadece JSON formatında döndür, başka hiçbir şey yazma,Her soru için mutlaka bir "konu" etiketi belirle, bu konu dersin alt başlıklarından biri olmalı
-- Eğer transkriptte anlamsız, bozuk veya yanlış yazılmış görünen teknik terimler varsa (örneğin Türkçe ses çevirisinden kaynaklanan hatalar), bunları görmezden gel
-- Sadece net ve anlaşılır konulardan soru üret
-- Bir terimin doğru olup olmadığından emin değilsen o terimi soruda kullanma
-- Soruların eğitici ve mantıklı olmasına öncelik ver
-JSON formatı:
+SORU KALİTESİ KURALLARI:
+1. Sorular ezbere değil, kavrama ve uygulama odaklı olmalı
+2. En az 2 soru "neden", "nasıl" veya "hangisi yanlıştır" formatında olmalı
+3. Yanlış şıklar mantıklı ve yanıltıcı olmalı — çok bariz olmamalı
+4. Her sorunun TEK bir doğru cevabı olmalı
+5. Transkriptte bozuk/hatalı görünen terimler varsa o konudan soru üretme
+6. Her soru farklı bir konudan olmalı, tekrar etme
+
+ZORUNLU ALANLAR — Her soruda şunlar mutlaka olmalı:
+- "soru": Soru metni (Türkçe)
+- "konu": Sorunun ait olduğu ders alt başlığı (örn: "Karar Ağaçları", "Overfitting")
+- "secenekler": A, B, C, D şıkları
+- "dogru_cevap": Tek harf (A/B/C/D)
+- "aciklama": Doğru cevabın neden doğru, diğerlerinin neden yanlış olduğunun kısa açıklaması
+
+ÇIKTI FORMATI — Sadece bu JSON array'i döndür, başka hiçbir şey yazma:
 [
   {{
-    "soru": "Soru metni",
-    "konu": "Bu sorunun ait olduğu konu (örn: Random Forest, Karar Ağaçları)",
+    "soru": "...",
+    "konu": "...",
     "secenekler": {{
-      "A": "Seçenek A",
-      "B": "Seçenek B", 
-      "C": "Seçenek C",
-      "D": "Seçenek D"
+      "A": "...",
+      "B": "...",
+      "C": "...",
+      "D": "..."
     }},
     "dogru_cevap": "A",
-    "aciklama": "Neden bu cevap doğru, diğerleri neden yanlış"
+    "aciklama": "..."
   }}
 ]"""
 
-    response = llm.invoke(prompt)
-    
-    # JSON parse et
+    from langchain_core.messages import SystemMessage, HumanMessage
+    response = llm.invoke([
+        SystemMessage(content=system_prompt),
+        HumanMessage(content=user_prompt)
+    ])
+
     try:
-        # Bazen model ```json ``` ile sarıyor, temizle
         text = response.content.strip()
-        text = text.replace("```json", "").replace("```", "").strip()
+        # Model bazen ```json veya ``` ile sarıyor, temizle
+        if "```" in text:
+            text = text.split("```")[1]
+            if text.startswith("json"):
+                text = text[4:]
+        text = text.strip()
+        
         quiz = json.loads(text)
-        print(f"{len(quiz)} soru üretildi.")
+        
+        # Kalite kontrolü: eksik alan olan soruları filtrele
+        required_keys = {"soru", "konu", "secenekler", "dogru_cevap", "aciklama"}
+        quiz = [q for q in quiz if required_keys.issubset(q.keys())]
+        
+        # dogru_cevap gerçekten A/B/C/D mi kontrol et
+        quiz = [q for q in quiz if q["dogru_cevap"] in ("A", "B", "C", "D")]
+        
+        print(f"{len(quiz)} geçerli soru üretildi.")
         return quiz
-    except json.JSONDecodeError:
-        print("JSON parse hatası, ham cevap:")
-        print(response.content)
+        
+    except json.JSONDecodeError as e:
+        print(f"JSON parse hatası: {e}")
+        print("Ham cevap:", response.content[:500])
         return []
+    
 
 
 def print_quiz(quiz: list):
@@ -85,46 +126,103 @@ def generate_true_false(vectorstore, soru_sayisi: int = 5) -> list:
     """
     llm = ChatGroq(
         api_key=os.getenv("GROQ_API_KEY"),
-        model="llama-3.3-70b-versatile"
+        model="llama-3.3-70b-versatile",
+        temperature=0.7,
+        max_tokens=4096,
     )
 
-    retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
-    docs = retriever.invoke("bu derste anlatılan önemli bilgiler ve kavramlar")
-    context = "\n".join([doc.page_content for doc in docs])
+    retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
+    queries = [
+        "bu derste anlatılan tanımlar ve kavramlar",
+        "bu derste açıklanan yöntemler ve algoritmalar",
+        "bu derste verilen örnekler ve sonuçlar",
+    ]
+    seen = set()
+    all_docs = []
+    for q in queries:
+        for doc in retriever.invoke(q):
+            if doc.page_content not in seen:
+                seen.add(doc.page_content)
+                all_docs.append(doc)
 
-    prompt = f"""Aşağıdaki ders transkriptine dayanarak {soru_sayisi} adet doğru/yanlış sorusu üret.
+    context = "\n\n".join([doc.page_content for doc in all_docs])
 
-Transkript:
+    # Dağılımı kendimiz hesaplayıp modele söylüyoruz
+    yanlis_sayi = soru_sayisi // 2
+    dogru_sayi = soru_sayisi - yanlis_sayi
+
+    system_prompt = """Sen deneyimli bir eğitim uzmanısın. Ders transkriptlerinden öğrencinin kavrayışını ölçen doğru/yanlış ifadeleri üretiyorsun.
+Görevin: Öğrenciyi gerçekten düşündüren, ezber değil anlama odaklı ifadeler hazırlamak.
+Kural: SADECE verilen JSON formatında cevap ver. Hiçbir ek açıklama veya yorum yazma."""
+
+    user_prompt = f"""Aşağıdaki ders transkriptine dayanarak TAM OLARAK {soru_sayisi} adet doğru/yanlış ifadesi üret.
+
+TRANSKRIPT:
 {context}
 
-Kurallar:
-- Her ifade ya doğru ya yanlış olmalı
-- İfadelerin yaklaşık yarısı doğru, yarısı yanlış olsun
-- Yanlış ifadeler mantıklı ama hatalı bilgi içersin (öğrenciyi düşündürsün)
-- Anlamsız veya bozuk görünen teknik terimleri kullanma
-- Türkçe yaz
-- Her soruya bir konu etiketi ekle
-- Sadece JSON formatında döndür, başka hiçbir şey yazma
+DAĞILIM — Bu dağılıma KESINLIKLE uy:
+- TAM OLARAK {dogru_sayi} ifade "dogru_mu": true olmalı
+- TAM OLARAK {yanlis_sayi} ifade "dogru_mu": false olmalı
+- Doğru ve yanlış ifadeleri birbirine karıştır, hepsini başa ya da sona koyma
 
-JSON formatı:
+İFADE KALİTESİ KURALLARI:
+1. Her ifade farklı bir konudan olmalı, tekrar etme
+2. Yanlış ifadeler mantıklı ama hatalı bilgi içermeli — çok bariz olmamalı
+   Örnek iyi yanlış ifade: "Random Forest'ta ağaçlar sıralı olarak eğitilir" (aslında paralel)
+   Örnek kötü yanlış ifade: "Karar ağaçları hiçbir zaman kullanılmaz" (çok bariz)
+3. Doğru ifadeler de ezbere değil, kavramayı ölçmeli
+4. Transkriptte bozuk/hatalı görünen terimler varsa o konudan ifade üretme
+5. Türkçe yaz
+
+ZORUNLU ALANLAR — Her ifadede şunlar mutlaka olmalı:
+- "ifade": Değerlendirilecek cümle
+- "konu": İfadenin ait olduğu ders alt başlığı
+- "dogru_mu": true veya false (boolean)
+- "aciklama": Neden doğru veya yanlış olduğunun kısa açıklaması
+
+ÇIKTI FORMATI — Sadece bu JSON array'i döndür, başka hiçbir şey yazma:
 [
   {{
-    "ifade": "Değerlendirilecek ifade",
-    "konu": "Konu adı",
+    "ifade": "...",
+    "konu": "...",
     "dogru_mu": true,
-    "aciklama": "Neden doğru veya yanlış olduğunun açıklaması"
+    "aciklama": "..."
   }}
 ]"""
 
-    response = llm.invoke(prompt)
+    from langchain_core.messages import SystemMessage, HumanMessage
+    response = llm.invoke([
+        SystemMessage(content=system_prompt),
+        HumanMessage(content=user_prompt)
+    ])
 
     try:
         text = response.content.strip()
-        text = text.replace("```json", "").replace("```", "").strip()
+        if "```" in text:
+            text = text.split("```")[1]
+            if text.startswith("json"):
+                text = text[4:]
+        text = text.strip()
+
         sorular = json.loads(text)
-        print(f"{len(sorular)} doğru/yanlış sorusu üretildi.")
+
+        # Kalite kontrolü: eksik alan olanları filtrele
+        required_keys = {"ifade", "konu", "dogru_mu", "aciklama"}
+        sorular = [s for s in sorular if required_keys.issubset(s.keys())]
+
+        # dogru_mu boolean mı kontrol et (model bazen "true" string döndürüyor)
+        for s in sorular:
+            if isinstance(s["dogru_mu"], str):
+                s["dogru_mu"] = s["dogru_mu"].lower() == "true"
+
+        # Dağılım kontrolü — log'a yaz
+        gercek_dogru = sum(1 for s in sorular if s["dogru_mu"])
+        gercek_yanlis = len(sorular) - gercek_dogru
+        print(f"{len(sorular)} ifade üretildi: {gercek_dogru} doğru, {gercek_yanlis} yanlış")
+
         return sorular
-    except json.JSONDecodeError:
-        print("JSON parse hatası:")
-        print(response.content)
+
+    except json.JSONDecodeError as e:
+        print(f"JSON parse hatası: {e}")
+        print("Ham cevap:", response.content[:500])
         return []
